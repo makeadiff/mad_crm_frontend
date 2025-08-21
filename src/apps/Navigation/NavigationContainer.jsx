@@ -6,7 +6,7 @@ import { useAppContext } from '@/context/appContext';
 
 import useLanguage from '@/locale/useLanguage';
 import logoIcon from '@/style/images/madlogo.png';
-import logoText from '@/style/images/logo-text.svg';
+import crm_logo from '@/style/images/crm_logo_png.png';
 
 // import logoText from '@/style/images/logo-text.svg';
 
@@ -187,7 +187,7 @@ function Sidebar({ collapsible, isMobile = false }) {
 
         {!showLogoApp && (
           <img 
-            src={logoText}
+            src={crm_logo}
             alt="Logo"
             style={{
               marginTop: '3px',

@@ -44,7 +44,14 @@ const PasswordModal = () => {
           rules={[
             {
               required: true,
-              min: 8,
+              min: 6,
+              message: translate('Password must be at least 6 characters'),
+            },
+            {
+              pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/,
+              message: translate(
+                'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
+              ),
             },
           ]}
           hasFeedback

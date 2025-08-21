@@ -30,12 +30,13 @@
     "vite": "^5.4.8"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "dev:remote": "cross-env VITE_DEV_REMOTE=remote npm run dev"
-  },
+  "start:development": "echo '🚀 Running Development Environment' && vite --mode development",
+  "start:staging": "echo '🚀 Running Staging Environment' && vite --mode staging",
+  "start:production": "echo '🚀 Running Production Environment' && vite --mode production",
+  "build:development": "echo '📦 Building Development...' && vite build --mode development",
+  "build:staging": "echo '📦 Building Staging...' && vite build --mode staging",
+  "build:production": "echo '📦 Building Production...' && vite build --mode production"
+},
   "devDependencies": {
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.17",
