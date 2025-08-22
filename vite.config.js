@@ -9,8 +9,9 @@ export default ({ mode }) => {
   const proxy_url =
     process.env.VITE_DEV_REMOTE === 'remote'
       ? process.env.VITE_BACKEND_SERVER
-      : 'http://localhost:8888/';
+      : process.env.VITE_BACKEND_SERVER || 'http://localhost:8888/';
 
+      console.log('Using backend prox server:', proxy_url);
   const config = {
     plugins: [react()],
     resolve: {
@@ -23,6 +24,11 @@ export default ({ mode }) => {
       port: 3000,
       proxy: {
         '/api': {
+          target: proxy_url,
+          changeOrigin: true,
+          secure: false,
+        },
+        '/download': {
           target: proxy_url,
           changeOrigin: true,
           secure: false,

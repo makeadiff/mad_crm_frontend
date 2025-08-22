@@ -17,7 +17,7 @@ export default function CoListSelect({ name, label, required, disabled }) {
         const auth = storePersist.get('auth');
         const token = auth?.current?.token;
 
-        const response = await axios.get(`${API_BASE_URL}user/listAll?role=co,manager`, {
+        const response = await axios.get('user/listAll?role=co,manager', {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });

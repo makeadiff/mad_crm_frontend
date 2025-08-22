@@ -23,7 +23,7 @@ export default function LocationSelect({ nameState, nameCity, labelState, labelC
         const auth = storePersist.get('auth');
         const token = auth?.current?.token;
 
-        const response = await axios.get(`${API_BASE_URL}state/list`, {
+        const response = await axios.get('state/list', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -52,7 +52,7 @@ export default function LocationSelect({ nameState, nameCity, labelState, labelC
     try {
       const auth = storePersist.get('auth');
       const token = auth?.current?.token;
-      const response = await axios.get(`${API_BASE_URL}city/list`, {
+      const response = await axios.get('city/list', {
         params: { stateId },
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
