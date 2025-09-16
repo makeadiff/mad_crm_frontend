@@ -1,4 +1,6 @@
+
 import './style/app.css';
+import MarkerIoWidget from '@/components/MarkerIoWidget/MarkerIoWidget';
 
 import { Suspense, lazy } from 'react';
 import { BrowserRouter } from 'react-router-dom';
@@ -12,6 +14,7 @@ export default function RoutApp() {
   return (
     <BrowserRouter>
       <Provider store={store}>
+        <MarkerIoWidget />
         <Suspense fallback={<PageLoader />}>
           <IdurarOs />
         </Suspense>

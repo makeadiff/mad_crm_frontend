@@ -9,6 +9,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.3.0",
     "@ant-design/pro-layout": "^7.17.19",
+    "@marker.io/browser": "^0.20.2",
     "@reduxjs/toolkit": "^2.2.1",
     "@vitejs/plugin-react": "^4.3.1",
     "antd": "^5.14.1",
@@ -30,13 +31,13 @@
     "vite": "^5.4.8"
   },
   "scripts": {
-  "start:development": "echo '🚀 Running Development Environment' && vite --mode development",
-  "start:staging": "echo '🚀 Running Staging Environment' && vite --mode staging",
-  "start:production": "echo '🚀 Running Production Environment' && vite --mode production",
-  "build:development": "echo '📦 Building Development...' && vite build --mode development",
-  "build:staging": "echo '📦 Building Staging...' && vite build --mode staging",
-  "build:production": "echo '📦 Building Production...' && vite build --mode production"
-},
+    "start:development": "echo '🚀 Running Development Environment' && vite --mode development",
+    "start:staging": "echo '🚀 Running Staging Environment' && vite --mode staging",
+    "start:production": "echo '🚀 Running Production Environment' && vite --mode production",
+    "build:development": "echo '📦 Building Development...' && vite build --mode development",
+    "build:staging": "echo '📦 Building Staging...' && vite build --mode staging",
+    "build:production": "echo '📦 Building Production...' && vite build --mode production"
+  },
   "devDependencies": {
     "@types/react": "^18.2.38",
     "@types/react-dom": "^18.2.17",
