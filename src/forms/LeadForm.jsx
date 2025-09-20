@@ -609,7 +609,7 @@ export default function LeadForm({ config, isUpdate = false, form }) {
                     name="mou_sign_date"
                     rules={[
                       {
-                        required: status === 'interested',
+                        required: true,
                         message: translate('please_select_mou_sign_date'),
                       },
                     ]}
@@ -631,7 +631,7 @@ export default function LeadForm({ config, isUpdate = false, form }) {
                     name="mou_start_date"
                     rules={[
                       {
-                        required: status === 'interested',
+                        required: true,
                         message: translate('please_select_mou_start_date'),
                       },
                     ]}
@@ -644,7 +644,7 @@ export default function LeadForm({ config, isUpdate = false, form }) {
                     name="mou_end_date"
                     rules={[
                       {
-                        required: status === 'interested',
+                        required: true,
                         message: translate('please_select_mou_end_date'),
                       },
                     ]}
@@ -673,7 +673,7 @@ export default function LeadForm({ config, isUpdate = false, form }) {
                   getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
                   rules={[
                     {
-                      required: status === 'interested',
+                      required: true,
                       message: translate('please_upload_mou_document'),
                     },
                   ]}
