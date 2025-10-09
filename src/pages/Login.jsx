@@ -15,7 +15,7 @@ import AuthModule from '@/modules/AuthModule';
 
 const LoginPage = () => {
   const translate = useLanguage();
-  const { isLoading, isSuccess } = useSelector(selectAuth);
+  const { isLoading, isSuccess,isLoggedIn } = useSelector(selectAuth);
   const navigate = useNavigate();
   // const size = useSize();
 
@@ -25,11 +25,12 @@ const LoginPage = () => {
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && isLoggedIn) {
+      console.log("is logged in value in login page:",isLoggedIn);
       console.log('..................navigating to dashboard started...................');
       navigate('/dashboard');
     }
-  }, [isSuccess]);
+  }, [isSuccess, isLoggedIn, navigate]);
 
   const FormContainer = () => {
     return (

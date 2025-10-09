@@ -15,13 +15,17 @@ function findKeyByPrefix(object, prefix) {
 
 function includeToken() {
   axios.defaults.baseURL = API_BASE_URL;
+  console.log("API_BASE_URL in include token function called:", API_BASE_URL)
 
   axios.defaults.withCredentials = true;
+  console.log("withCredentials in include token function called:", axios.defaults.withCredentials)
   const auth = storePersist.get('auth');
-  console.log("auth token in include token function :", auth.current.token)
+  // console.log("auth in include token function called:", auth)
+  console.log("auth token in include token function :", auth)
   if (auth) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${auth.current.token}`;
   }
+  console.log("include function completed")
 }
 
 const request = {
@@ -153,6 +157,7 @@ const request = {
   },
 
   list: async ({ entity, options = {} }) => {
+    console.log("In list method of request.js file, entity and options :", entity, options)
     try {
       includeToken();
       let query = '?';
@@ -195,9 +200,11 @@ const request = {
 
   post: async ({ entity, jsonData }) => {
     try {
+      console.log("In [POST] request.js file, entity and jsonData :", entity, jsonData)
       includeToken();
+      console.log("tokane included")
       const response = await axios.post(entity, jsonData);
-
+      console.log("response of post api :", response)
       return response.data;
     } catch (error) {
       return errorHandler(error);

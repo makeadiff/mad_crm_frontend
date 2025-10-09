@@ -23,6 +23,7 @@ const ForgetPassword = () => {
   }
 
   const onFinish = (values) => {
+    console.log('on finsish function called in forget password js Received values of form: ', values);
     const callback = postData(values);
     onFetch(callback);
   };

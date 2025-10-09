@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { resetPassword } from '@/redux/auth/actions';
 import { selectAuth } from '@/redux/auth/selectors';
@@ -19,24 +19,41 @@ const ResetPassword = () => {
   const translate = useLanguage();
   const { isLoading, isSuccess } = useSelector(selectAuth);
   const navigate = useNavigate();
-  const { userId, resetToken } = useParams();
+
+  const [token, setToken] = useState(null);
+
+useEffect(() => {
+  const queryString = window.location.search;
+  const params = new URLSearchParams(queryString);
+  const tokenValue = params.get('token'); 
+
+  if (tokenValue) {
+    setToken(tokenValue);
+  } else {
+    navigate('/login', { replace: true });
+  }
+}, [navigate]);
+
+
+useEffect(() => {
+  if (isSuccess) {
+    navigate('/login', { replace: true });
+  }
+}, [isSuccess, navigate]);
 
   const dispatch = useDispatch();
   const onFinish = (values) => {
+    if (!token) return; // optionally show an error/redirect
     dispatch(
       resetPassword({
         resetPasswordData: {
           password: values.password,
-          userId,
-          resetToken,
+          token: token,
         },
       })
     );
-  };
+  };  
 
-  useEffect(() => {
-    if (isSuccess) navigate('/');
-  }, [isSuccess]);
 
   const FormContainer = () => {
     return (
