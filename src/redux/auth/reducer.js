@@ -1,3 +1,4 @@
+import { current } from '@reduxjs/toolkit';
 import * as actionTypes from './types';
 
 const INITIAL_STATE = {
@@ -19,10 +20,9 @@ const authReducer = (state = INITIAL_STATE, action) => {
       return INITIAL_STATE;
 
     case actionTypes.REQUEST_SUCCESS:
-      console.log("action payload in auth reducer:", action.payload);
       return {
         current: action.payload,
-        isLoggedIn: action.payload?.isLoggedIn ?? false, // Use value from payload or default to false
+        isLoggedIn: true,
         isLoading: false,
         isSuccess: true,
       };
@@ -43,6 +43,22 @@ const authReducer = (state = INITIAL_STATE, action) => {
         isLoggedIn: true,
         isLoading: false,
         isSuccess: true,
+      };
+
+    case actionTypes.RESET_PASSWORD_SUCCESS:
+      return {
+        current: null,
+        isLoggedIn: false,
+        isLoading: false,
+        isSuccess: true,
+      };
+
+    case actionTypes.RESET_PASSWORD_FAILED:
+      return {
+        current: null,
+        isLoggedIn: false,
+        isLoading: false,
+        isSuccess: false,
       };
 
     default:

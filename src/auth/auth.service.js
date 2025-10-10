@@ -12,7 +12,6 @@ export const login = async ({ loginData }) => {
     );
 
     const { status, data } = response;
-    console.log("response of login api data :", data)
 
     successHandler(
       { data, status },

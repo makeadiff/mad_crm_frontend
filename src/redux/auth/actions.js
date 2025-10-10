@@ -21,18 +21,8 @@ export const login =
       window.localStorage.removeItem('isLogout');
       dispatch({
         type: actionTypes.REQUEST_SUCCESS,
-        payload: auth_state,
+        payload: data.result,
       });
-        // Compare Redux and localStorage after dispatch
-        setTimeout(() => {
-          const reduxState = window.__REDUX_DEVTOOLS_EXTENSION__?.getState?.() || 'Check in Redux DevTools';
-          const localStorageState = JSON.parse(window.localStorage.getItem('auth'));
-          console.log('--- AUTH STATE COMPARISON ---');
-          console.log('Redux state:', reduxState.auth || reduxState);
-          console.log('LocalStorage state:', localStorageState);
-          console.log('-----------------------------');
-        }, 500);
-        console.log("auth state stored on redx and local storage :", auth_state)
     } else {
       dispatch({
         type: actionTypes.REQUEST_FAILED,
@@ -96,23 +86,24 @@ export const resetPassword =
     const data = await authService.resetPassword({ resetPasswordData });
     console.log("verify reset password action data:", data.success)
     if (data.success === true) {
-      const auth_state = {
-        current: data.result,
-        isLoggedIn: false,
-        isLoading: false,
-        isSuccess: true,
-      };
-      window.localStorage.setItem('auth', JSON.stringify(auth_state));
-      window.localStorage.removeItem('isLogout');
-      // window.localStorage.removeItem('auth');
-      // window.localStorage.setItem('isLogout', JSON.stringify({ isLogout: true }));
+      // const auth_state = {
+      //   current: data.result,
+      //   isLoggedIn: false,
+      //   isLoading: false,
+      //   isSuccess: true,
+      // };
+      // window.localStorage.setItem('auth', JSON.stringify(auth_state));
+      // window.localStorage.removeItem('isLogout');
+      // dispatch({
+      //   type: actionTypes.REQUEST_SUCCESS,
+      //   payload: data.result,
+      // });
       dispatch({
-        type: actionTypes.REQUEST_SUCCESS,
-        payload: data.result,
+        type: actionTypes.RESET_PASSWORD_SUCCESS,
       });
     } else {
       dispatch({
-        type: actionTypes.REQUEST_FAILED,
+        type: actionTypes.RESET_PASSWORD_FAILED,
       });
     }
   };

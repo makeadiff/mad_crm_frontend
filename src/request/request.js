@@ -15,17 +15,17 @@ function findKeyByPrefix(object, prefix) {
 
 function includeToken() {
   axios.defaults.baseURL = API_BASE_URL;
-  console.log("API_BASE_URL in include token function called:", API_BASE_URL)
+  // console.log("API_BASE_URL in include token function called:", API_BASE_URL)
 
   axios.defaults.withCredentials = true;
-  console.log("withCredentials in include token function called:", axios.defaults.withCredentials)
+  // console.log("withCredentials in include token function called:", axios.defaults.withCredentials)
   const auth = storePersist.get('auth');
   // console.log("auth in include token function called:", auth)
-  console.log("auth token in include token function :", auth)
+  // console.log("auth token in include token function :", auth)
   if (auth) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${auth.current.token}`;
   }
-  console.log("include function completed")
+  // console.log("include function completed")
 }
 
 const request = {

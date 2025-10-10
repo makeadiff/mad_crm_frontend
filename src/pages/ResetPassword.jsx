@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { resetPassword } from '@/redux/auth/actions';
-import { selectAuth } from '@/redux/auth/selectors';
+import { isLoggedIn, selectAuth } from '@/redux/auth/selectors';
 
 import { Form, Button } from 'antd';
 
@@ -17,7 +17,7 @@ import AuthModule from '@/modules/AuthModule';
 
 const ResetPassword = () => {
   const translate = useLanguage();
-  const { isLoading, isSuccess } = useSelector(selectAuth);
+  const { isLoading, isSuccess, isLoggedIn } = useSelector(selectAuth);
   const navigate = useNavigate();
 
   const [token, setToken] = useState(null);
@@ -37,6 +37,7 @@ useEffect(() => {
 
 useEffect(() => {
   if (isSuccess) {
+    console.log('Password reset successful, redirecting to login...');
     navigate('/login', { replace: true });
   }
 }, [isSuccess, navigate]);
