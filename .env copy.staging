@@ -1,0 +1,5 @@
+VITE_FILE_BASE_URL=https://test.crm.makeadiff.in/
+VITE_BACKEND_SERVER=https://test.crm.makeadiff.in/
+VITE_DEV_REMOTE=staging
+VITE_ENV_LABEL=staging
+VITE_MARKER_IO_PROJECT_ID=68c93ebacf24fd22d668657a
