@@ -19,6 +19,10 @@ import CoListSelect from '../components/CoListComponent/CoListSelect';
 import LocationSelect from '../components/SelectBoxComponent/StateSelect';
 import Loading from '../components/Loading';
 
+import LeadTrackingView from '../pages/Lead/LeadTrackingView.jsx';
+import { Card, Divider } from 'antd';
+
+
 export default function LeadForm({ config, isUpdate = false, form }) {
   // console.log(isUpdate, 'isUpdate');
 
@@ -40,11 +44,11 @@ export default function LeadForm({ config, isUpdate = false, form }) {
   const dispatch = useDispatch();
   const { crudContextAction, state } = useCrudContext();
   const { collapsedBox } = crudContextAction;
-  const {isEditBoxOpen} = state;
+  const { isEditBoxOpen, isBoxCollapsed, isPanelClose } = state;
 
   const { result: currentItem } = useSelector(selectCurrentItem);
-  console.log("lead form is rendered................")
-  // console.log("initial current Item value in LeadForm :", currentItem)
+
+  const [tracking, setTracking] = useState([]);
 
   const setFormCoversionStage = (value) => {
     console.log("set conversion stage value from current item :", value)
@@ -72,8 +76,23 @@ export default function LeadForm({ config, isUpdate = false, form }) {
   }
 
   useEffect(() => {
-    if (isUpdate && currentItem) {
+    if(isPanelClose || isBoxCollapsed){
+    
+    form.resetFields();
+    setStatus('new');
+    setIsMouSigned(null);
+    setIsSpecificDocumentRequired(null);
+    setFileList([]);
+    setDelayedCurrentStatus(null);
+    setIsInterested(null);
+    setIsConverted(null);
+    setIsReady(false);
+    }
+  }, [isPanelClose, isBoxCollapsed])
 
+  useEffect(() => {
+    if (isUpdate && currentItem) {
+console.log("current item in lead form useeffect isupdate:", currentItem)
     let updatedConversionStage = "new"; // Default stage
 
     // Map backend conversion_stage to allowed values
@@ -112,8 +131,26 @@ export default function LeadForm({ config, isUpdate = false, form }) {
 
 
       setIsReady(true);
-    }
-  }, [currentItem, isUpdate, form]);
+
+      if (currentItem.tracking_history && Array.isArray(currentItem.tracking_history)) {
+        // Sort if needed (oldest → latest)
+        const sorted = [...currentItem.tracking_history].sort(
+          (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+        );
+
+        setTracking(sorted.map(t => ({
+          stage: t.stage,
+          createdAt: t.createdAt,
+          remarks: t.remarks || null
+        })));
+      } else {
+        setTracking([]);
+      }
+    };
+      
+  }, [currentItem, isUpdate, form])
+
+    
 
   // const { result: listResult} =    useSelector(selectListItems);
   // const { pagination, items: dataSource } = listResult;
@@ -281,6 +318,14 @@ export default function LeadForm({ config, isUpdate = false, form }) {
   return (
     <Loading isLoading={loading}>
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
+        {isUpdate && tracking?.length > 0 && (
+          <Card size="small" style={{ marginBottom: 12 }}>
+            <LeadTrackingView trackingData={tracking} 
+            initialTimelineItems={3}
+            />
+            
+          </Card>
+        )}
         {/* Status */}
         <Form.Item
           label={translate('conversion_stage')}
@@ -383,11 +428,17 @@ export default function LeadForm({ config, isUpdate = false, form }) {
               />
             </Form.Item>
 
-            <Form.Item label={translate('Point_of_Contact_(POC)_Name')} name="poc_name" required>
+            <Form.Item label={translate('Point_of_Contact_(POC)_Name')} name="poc_name"
+            rules={[
+                { required: true, message: translate('Please enter poc name') }
+              ]}>
               <Input onChange={(e) => handleFieldChange('poc_name', e.target.value)} />
             </Form.Item>
 
-            <Form.Item label={translate('POC_Designation')} name="poc_designation" required>
+            <Form.Item label={translate('POC_Designation')} name="poc_designation"
+            rules={[
+                { required: true, message: translate('Please enter poc designation') }
+              ]}>
               <Input onChange={(e) => handleFieldChange('poc_designation', e.target.value)} />
             </Form.Item>
 
@@ -436,7 +487,10 @@ export default function LeadForm({ config, isUpdate = false, form }) {
               />
             </Form.Item>
 
-            <Form.Item label={translate('school_type')} name="school_type" required>
+            <Form.Item label={translate('school_type')} name="school_type" 
+            rules={[
+                { required: true, message: translate('Please enter school type') }
+              ]}>
               <Select
                 options={schoolTypeList}
                 onChange={(value) => handleFieldChange('type_of_school', value)}
@@ -718,12 +772,7 @@ export default function LeadForm({ config, isUpdate = false, form }) {
                 <Form.Item
                   label={translate('specific_document_required')}
                   name="specific_doc_required"
-                  rules={[
-                    {
-                      required: status === 'interested',
-                      message: translate('please_select_specific_document_required'),
-                    },
-                  ]}
+                  rules={[{ required: true, message: 'Please choose an option' }]}
                 >
                   <Radio.Group onChange={handleSpecificDocumentRequiredChange}>
                     <Radio value="true">Yes</Radio>

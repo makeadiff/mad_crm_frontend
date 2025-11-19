@@ -174,7 +174,7 @@ export default function DataTable({ config, extra = [] }) {
   const dispatch = useDispatch();
 
   const handelDataTableLoad = useCallback((pagination) => {
-    console.log('Loading data for page:', pagination.current);
+    // console.log('Loading data for page:', pagination.current);
     const options = { page: pagination.current || 1, items: pagination.pageSize || 10 };
     dispatch(crud.list({ entity, options }));
   }, []);

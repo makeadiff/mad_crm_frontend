@@ -154,10 +154,10 @@ export const crud = {
           keyState: 'update',
           payload: data.result,
         });
-        dispatch({
-          type: actionTypes.CURRENT_ITEM,
-          payload: data.result,
-        });
+        // dispatch({
+        //   type: actionTypes.CURRENT_ITEM,
+        //   payload: data.result,
+        // });
       } else {
         dispatch({
           type: actionTypes.REQUEST_FAILED,
@@ -168,7 +168,7 @@ export const crud = {
     },
 
   delete:
-    ({ entity, id }) =>
+    ({ entity, id, data: body }) =>
     async (dispatch) => {
       dispatch({
         type: actionTypes.RESET_ACTION,
@@ -180,7 +180,7 @@ export const crud = {
         payload: null,
       });
 
-      let data = await request.delete({ entity, id });
+      let data = await request.delete({ entity, id, data: body });
 
       if (data.success === true) {
         dispatch({

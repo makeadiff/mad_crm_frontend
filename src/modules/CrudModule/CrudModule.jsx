@@ -123,12 +123,15 @@ function FixHeaderPanel({ config }) {
   );
 }
 
-function CrudModule({ config, createForm, updateForm, withUpload = false, submitButton= true, readItem }) {
+function CrudModule({ config, createForm, updateForm, withUpload = false, submitButton= true, readItem, DeleteModalComponent }) {
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {
     dispatch(crud.resetState());
   }, []);
+
+  // ✅ Decide which delete modal to use
+  const UsedDeleteModal = DeleteModalComponent || DeleteModal;
 
   return (
     <CrudLayout
@@ -144,7 +147,7 @@ function CrudModule({ config, createForm, updateForm, withUpload = false, submit
       }
     >
       <DataTable config={config} />
-      <DeleteModal config={config} />
+      <UsedDeleteModal config={config} /> {/* ✅ uses injected or default */}
     </CrudLayout>
   );
 }

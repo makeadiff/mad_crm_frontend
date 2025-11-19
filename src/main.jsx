@@ -9,7 +9,5 @@ console.log(
 console.log('🌐 API Base URL:', import.meta.env.VITE_BACKEND_SERVER);
 console.log('📁 File Base URL:', import.meta.env.VITE_FILE_BASE_URL);
 
-
-
 const root = createRoot(document.getElementById('root'));
 root.render(<RootApp />);
