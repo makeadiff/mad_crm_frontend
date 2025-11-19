@@ -1,4 +1,7 @@
 export const fields = {
+  id:{
+
+  },
   partner_name: {
     type: 'string',
   },

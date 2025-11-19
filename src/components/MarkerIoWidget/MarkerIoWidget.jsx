@@ -8,7 +8,7 @@ export default function MarkerIoWidget() {
     if (window.__markerLoading || window.__markerLoaded) return;
 
     const PROJECT_ID = import.meta.env?.VITE_MARKER_IO_PROJECT_ID; // <- Vite only
-    console.log("Marker.io Project ID:", PROJECT_ID);
+    // console.log("Marker.io Project ID:", PROJECT_ID);
 
     if (!PROJECT_ID) {
       console.warn("Marker.io: PROJECT_ID missing");

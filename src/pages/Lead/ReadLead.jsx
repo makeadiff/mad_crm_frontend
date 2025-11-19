@@ -3,6 +3,7 @@ import useLanguage from '@/locale/useLanguage';
 import { useSelector } from 'react-redux';
 import { selectCurrentItem } from '@/redux/crud/selectors';
 import dayjs from 'dayjs';
+import PartnerTrackingView from '../../components/LeadTracker/PartnerTrackingView';
 
 export default function ReadLead() {
   console.log('ReadLead function called');
@@ -12,6 +13,12 @@ export default function ReadLead() {
   console.log("current item in read Lead box :", currentItem)
 
   return (
+
+    <>
+      {Array.isArray(currentItem?.tracking_history) && (
+        <PartnerTrackingView trackingData={currentItem.tracking_history} />
+      )}
+ 
     <Descriptions bordered column={1}>
       {currentItem.conversion_stage && (
         <Descriptions.Item label={translate('conversion_stage')}>
@@ -145,5 +152,7 @@ export default function ReadLead() {
         </>
       )}
     </Descriptions>
+
+    </>
   );
 }

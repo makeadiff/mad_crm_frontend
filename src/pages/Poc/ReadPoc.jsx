@@ -4,6 +4,7 @@ import useLanguage from '@/locale/useLanguage';
 import { useSelector } from 'react-redux';
 import { selectCurrentItem } from '@/redux/crud/selectors';
 import dayjs from 'dayjs';
+import PartnerTrackingView from '../../components/LeadTracker/PartnerTrackingView';
 
 export default function ReadPoc() {
 
@@ -13,6 +14,10 @@ export default function ReadPoc() {
   console.log('current item in read poc box :', currentItem);
 
   return (
+    <>
+      {Array.isArray(currentItem?.tracking_history) && (
+        <PartnerTrackingView trackingData={currentItem.tracking_history} />
+      )}
     <Descriptions bordered column={1}>
       {/* {currentItem.conversion_stage && (
         <Descriptions.Item label={translate('conversion_stage')}>
@@ -139,5 +144,6 @@ export default function ReadPoc() {
         </>
       )}
     </Descriptions>
+    </>
   );
 }

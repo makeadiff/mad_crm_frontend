@@ -6,6 +6,7 @@ import useLanguage from '@/locale/useLanguage';
 import ReadOrganization from './ReadOrganization';
 import PageInfoPopup from '@/components/CustomPopUp/PageInfoPopup';
 import OrganizationForm from '@/forms/OrganizationForm';
+import OrganizationDeleteModal from './OrganizationDeleteModal';
 
 export default function Organization(){
   const translate = useLanguage();
@@ -50,6 +51,7 @@ export default function Organization(){
         config={config}
         updateForm={<OrganizationForm config={config} form={updateForm} isUpdate={true} fields={fields} />}
         readItem={<ReadOrganization />}
+        DeleteModalComponent={OrganizationDeleteModal}
       />
     </>
   );
