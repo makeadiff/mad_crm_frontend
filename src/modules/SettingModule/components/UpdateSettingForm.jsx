@@ -16,7 +16,7 @@ export default function UpdateSettingForm({ config, children, withUpload, upload
   const [form] = Form.useForm();
 
   const onSubmit = (fieldsValue) => {
-    console.log('🚀 ~ onSubmit ~ fieldsValue:', fieldsValue);
+    // console.log('🚀 ~ onSubmit ~ fieldsValue:', fieldsValue);
     if (withUpload) {
       if (fieldsValue.file) {
         fieldsValue.file = fieldsValue.file[0].originFileObj;

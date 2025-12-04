@@ -32,6 +32,9 @@ export default function Organization(){
     fields,
     searchConfig,
     deleteModalLabels,
+    permissions: {
+      canDelete: ['Project Associate','Project Lead', 'Function Lead']
+    }
   };
 
   const [createForm] = Form.useForm();

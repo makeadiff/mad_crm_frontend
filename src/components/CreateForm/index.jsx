@@ -19,9 +19,9 @@ export default function CreateForm({ config, formElements, withUpload = false, s
   const [form] = Form.useForm();
   const translate = useLanguage();
   const onSubmit = (fieldsValue) => {
-    console.log("form fields on submit :", fieldsValue)
+    // console.log("form fields on submit :", fieldsValue)
     // Manually trim values before submission
-    console.log("fieldsValue in create form is:", fieldsValue);
+    // console.log("fieldsValue in create form is:", fieldsValue);
     if (fieldsValue.file && withUpload) {
       fieldsValue.file = fieldsValue.file[0].originFileObj;
     }

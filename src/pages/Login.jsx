@@ -26,8 +26,8 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (isSuccess && isLoggedIn) {
-      console.log("is logged in value in login page:",isLoggedIn);
-      console.log('..................navigating to dashboard started...................');
+      // console.log("is logged in value in login page:",isLoggedIn);
+      // console.log('..................navigating to dashboard started...................');
       navigate('/dashboard');
     }
   }, [isSuccess, isLoggedIn, navigate]);

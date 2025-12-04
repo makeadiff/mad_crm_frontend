@@ -84,7 +84,7 @@ export const resetPassword =
       type: actionTypes.REQUEST_LOADING,
     });
     const data = await authService.resetPassword({ resetPasswordData });
-    console.log("verify reset password action data:", data.success)
+    // console.log("verify reset password action data:", data.success)
     if (data.success === true) {
       // const auth_state = {
       //   current: data.result,

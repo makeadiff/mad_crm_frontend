@@ -37,7 +37,7 @@ useEffect(() => {
 
 useEffect(() => {
   if (isSuccess) {
-    console.log('Password reset successful, redirecting to login...');
+    // console.log('Password reset successful, redirecting to login...');
     navigate('/login', { replace: true });
   }
 }, [isSuccess, navigate]);

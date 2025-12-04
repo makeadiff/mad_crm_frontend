@@ -157,7 +157,7 @@ const request = {
   },
 
   list: async ({ entity, options = {} }) => {
-    console.log("In list method of request.js file, entity and options :", entity, options)
+    // console.log("In list method of request.js file, entity and options :", entity, options)
     try {
       includeToken();
       let query = '?';
@@ -200,11 +200,11 @@ const request = {
 
   post: async ({ entity, jsonData }) => {
     try {
-      console.log("In [POST] request.js file, entity and jsonData :", entity, jsonData)
+      // console.log("In [POST] request.js file, entity and jsonData :", entity, jsonData)
       includeToken();
-      console.log("tokane included")
+      // console.log("tokane included")
       const response = await axios.post(entity, jsonData);
-      console.log("response of post api :", response)
+      // console.log("response of post api :", response)
       return response.data;
     } catch (error) {
       return errorHandler(error);

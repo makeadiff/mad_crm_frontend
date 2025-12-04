@@ -20,7 +20,7 @@ const AdminInfo = ({ config }) => {
   const { modal, updatePanel } = profileContextAction;
   const { ENTITY_NAME } = config;
   const currentAdmin = useSelector(selectCurrentAdmin);
-  console.log("current admin details in admin infopage :", currentAdmin)
+  // console.log("current admin details in admin infopage :", currentAdmin)
 
   return (
     <>
