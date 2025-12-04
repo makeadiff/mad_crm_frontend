@@ -29,7 +29,7 @@ export default function LeadForm({ config, isUpdate = false, form }) {
   const translate = useLanguage();
 
   const [status, setStatus] = useState('new');
-  console.log("set status value :", status)
+  // console.log("set status value :", status)
   const [loading, setLoading] = useState(false);
 
   const [isMouSigned, setIsMouSigned] = useState(null);
@@ -51,14 +51,14 @@ export default function LeadForm({ config, isUpdate = false, form }) {
   const [tracking, setTracking] = useState([]);
 
   const setFormCoversionStage = (value) => {
-    console.log("set conversion stage value from current item :", value)
+    // console.log("set conversion stage value from current item :", value)
     if(value == 'new'){
       setStatus('new')
     }
 
     if(value == 'interested'){
       // currentItem.conversion_stage = 'prospecting';
-      console.log("setting tha form conversion stage prospecting")
+      // console.log("setting tha form conversion stage prospecting")
       setStatus('prospecting')
     }
     
@@ -92,7 +92,7 @@ export default function LeadForm({ config, isUpdate = false, form }) {
 
   useEffect(() => {
     if (isUpdate && currentItem) {
-console.log("current item in lead form useeffect isupdate:", currentItem)
+// console.log("current item in lead form useeffect isupdate:", currentItem)
     let updatedConversionStage = "new"; // Default stage
 
     // Map backend conversion_stage to allowed values
@@ -121,7 +121,7 @@ console.log("current item in lead form useeffect isupdate:", currentItem)
           ? dayjs(currentItem.agreement_drop_date)
           : null,
       });
-      console.log("current iteam value in lead form middle of useeffeect) :", currentItem)
+      // console.log("current iteam value in lead form middle of useeffeect) :", currentItem)
       // setFormCoversionStage(currentItem.conversion_stage)
       setStatus(updatedConversionStage);
       setIsConverted(currentItem.converted || null)
@@ -179,7 +179,7 @@ console.log("current item in lead form useeffect isupdate:", currentItem)
 
   // When status changes, also update formData
   const handleStatusChange = (value) => {
-    console.log('Status changed to:', value);
+    // console.log('Status changed to:', value);
     setStatus(value);
     handleFieldChange('status', value);
     form.setFieldValue('lead_status', value);
@@ -207,7 +207,7 @@ console.log("current item in lead form useeffect isupdate:", currentItem)
 
   const handleDelayedCurrentStatusChange = (value) => {
     setDelayedCurrentStatus(value);
-    console.log("handled delayed current status :", value)
+    // console.log("handled delayed current status :", value)
     // setStatus(value);
     handleFieldChange('current_status', value);
   };
@@ -215,13 +215,13 @@ console.log("current item in lead form useeffect isupdate:", currentItem)
   const handleInterestedChange = (e) => {
     const value = e.target.value
     setIsInterested(value)
-    console.log("handle interested change function value changed :", value)
+    // console.log("handle interested change function value changed :", value)
   }
 
   const handleConvertedChange = (e) => {
     const value = e.target.value
     setIsConverted(value)
-    console.log('handle converted value change function value changed :', value);
+    // console.log('handle converted value change function value changed :', value);
   }
 
   const setConversionStage = (dataToSend) => {
@@ -245,8 +245,8 @@ console.log("current item in lead form useeffect isupdate:", currentItem)
   }
 
   const handleSubmit = async(values) => {
-    console.log('Form submitted with values:', values);
-    console.log('current item details in Lead form :', currentItem);
+    // console.log('Form submitted with values:', values);
+    // console.log('current item details in Lead form :', currentItem);
 
     let dataToSend = { ...values };
     const conversion_stage = setConversionStage(dataToSend)  
@@ -256,7 +256,7 @@ console.log("current item in lead form useeffect isupdate:", currentItem)
       dataToSend.mou_sign = true
     }
 
-    console.log('data to send in lead form :', dataToSend);
+    // console.log('data to send in lead form :', dataToSend);
 
     setLoading(true);
 
@@ -309,7 +309,7 @@ console.log("current item in lead form useeffect isupdate:", currentItem)
 
   if (isUpdate) {
     if(!isReady){
-      console.log("its update function and not ready")
+      // console.log("its update function and not ready")
       return <Loading />; // Show a loader until data is set
     }
   }

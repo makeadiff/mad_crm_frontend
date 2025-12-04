@@ -53,7 +53,7 @@ export function contextReducer(state, action) {
         isBoxCollapsed: !state.isBoxCollapsed,
       };
     case actionTypes.OPEN_READ_BOX:
-      console.log('Dispatching OPEN_READ_BOX');
+      // console.log('Dispatching OPEN_READ_BOX');
       return {
         ...state,
         isAdvancedBoxOpen: false,

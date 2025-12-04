@@ -34,6 +34,7 @@ import { generate as uniqueId } from 'shortid';
 import { useCrudContext } from '@/context/crud';
 import useResponsive from '@/hooks/useResponsive';
 import { PlusOutlined } from '@ant-design/icons';
+import { has } from '@/utils/helpers';
 
 function AddNewItem({ config }) {
   const { crudContextAction } = useCrudContext();
@@ -62,6 +63,13 @@ export default function DataTable({ config, extra = [] }) {
   const { isMobile } = useResponsive();
 
   const { Text } = Typography;
+  const {permissions} = config;
+  const currentUserRole =  useSelector((state) => state.auth.current.role);
+
+  const hasPermission = (action) => {
+    if(!permissions || !permissions[action]) return true; // No permission restrictions
+    return permissions[action].includes(currentUserRole);
+  }
 
   const items = [
     {
@@ -69,7 +77,7 @@ export default function DataTable({ config, extra = [] }) {
       key: 'read',
       icon: <EyeOutlined />,
     },
-    {
+  {
       label: translate('Edit'),
       key: 'edit',
       icon: <EditOutlined />,
@@ -79,7 +87,7 @@ export default function DataTable({ config, extra = [] }) {
       type: 'divider',
     },
 
-    {
+    hasPermission('canDelete') && {
       label: translate('Delete'),
       key: 'delete',
       icon: <DeleteOutlined />,
@@ -88,12 +96,12 @@ export default function DataTable({ config, extra = [] }) {
   
   const { state } = useCrudContext();
   const handleRead = (record) => {
-    console.log('Before calling readBox.open(), isReadBoxOpen:', state.isReadBoxOpen);
+    // console.log('Before calling readBox.open(), isReadBoxOpen:', state.isReadBoxOpen);
     dispatch(crud.currentItem({ data: record }));
     panel.open();
     collapsedBox.open();
     readBox.open();
-    console.log('After calling readBox.open(), isReadBoxOpen:', state.isReadBoxOpen);
+    // console.log('After calling readBox.open(), isReadBoxOpen:', state.isReadBoxOpen);
   };
   function handleEdit(record) {
     // console.log("sending Editing record :", record)

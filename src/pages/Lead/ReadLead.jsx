@@ -6,11 +6,11 @@ import dayjs from 'dayjs';
 import PartnerTrackingView from '../../components/LeadTracker/PartnerTrackingView';
 
 export default function ReadLead() {
-  console.log('ReadLead function called');
+  // console.log('ReadLead function called');
   const translate = useLanguage();
   const { result: currentItem } = useSelector(selectCurrentItem);
 
-  console.log("current item in read Lead box :", currentItem)
+  // console.log("current item in read Lead box :", currentItem)
 
   return (
 
