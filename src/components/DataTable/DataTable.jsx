@@ -307,45 +307,63 @@ export default function DataTable({ config, extra = [] }) {
             </>
           ) : (
             <>
-              {dataSource.map((item) => (
-                <Card
-                  key={item._id}
-                  style={{
-                    padding: 10,
-                    borderRadius: 10,
-                    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                    border: '1px solid #f0f0f0',
-                  }}
-                  actions={[
-                    <Button type="text" icon={<EyeOutlined />} onClick={() => handleRead(item)} />,
-                    <Button type="text" icon={<EditOutlined />} onClick={() => handleEdit(item)} />,
+              {dataSource.map((item) => {
+                // ✅ Build mobile actions inside map so 'item' is available
+                const mobileActions = [
+                  <Button
+                    type="text"
+                    icon={<EyeOutlined />}
+                    onClick={() => handleRead(item)}
+                  />,
+                  hasPermission('canEdit') && (
                     <Button
                       type="text"
+                      icon={<EditOutlined />}
+                      onClick={() => handleEdit(item)}
+                    />
+                  ),
+                  hasPermission('canDelete') && (
+                    <Button
+                      type="text"
+                      // key="delete"
                       danger
                       icon={<DeleteOutlined />}
                       onClick={() => handleDelete(item)}
-                    />,
-                  ]}
-                >
-                  <Descriptions column={1} size="small">
-                    {dataTableColumns
-                      .filter((col) => col.dataIndex && col.dataIndex.length)
-                      .map((col) => {
-                        let value = col.dataIndex.reduce((acc, key) => acc?.[key], item);
+                    />
+                  ),
+                ].filter(Boolean); // ✅ Remove falsy values
 
-                        if (col.render) {
-                          value = col.render(value, item);
-                        }
+                return (
+                  <Card
+                    key={item._id}
+                    style={{
+                      padding: 10,
+                      borderRadius: 10,
+                      boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                      border: '1px solid #f0f0f0',
+                    }}
+                    actions={mobileActions}
+                  >
+                    <Descriptions column={1} size="small">
+                      {dataTableColumns
+                        .filter((col) => col.dataIndex && col.dataIndex.length)
+                        .map((col) => {
+                          let value = col.dataIndex.reduce((acc, key) => acc?.[key], item);
 
-                        return (
-                          <Descriptions.Item key={col.dataIndex.join('.')} label={col.title}>
-                            {value || '-'}
-                          </Descriptions.Item>
-                        );
-                      })}
-                  </Descriptions>
-                </Card>
-              ))}
+                          if (col.render) {
+                            value = col.render(value, item);
+                          }
+
+                          return (
+                            <Descriptions.Item key={col.dataIndex.join('.')} label={col.title}>
+                              {value || '-'}
+                            </Descriptions.Item>
+                          );
+                        })}
+                    </Descriptions>
+                  </Card>
+                );
+              })}
 
               {/* Pagination for Mobile */}
               <Pagination
