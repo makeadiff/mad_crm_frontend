@@ -53,7 +53,7 @@ function AddNewItem({ config }) {
     </Button>
   );
 }
-export default function DataTable({ config, extra = [] }) {
+export default function DataTable({ config, extra = [], onExtraAction, filterOptions = {} }) {
   let { entity, dataTableColumns, DATATABLE_TITLE, fields, searchConfig } = config;
   const { crudContextAction } = useCrudContext();
   const { panel, collapsedBox, modal, readBox, editBox, advancedBox } = crudContextAction;
@@ -77,7 +77,7 @@ export default function DataTable({ config, extra = [] }) {
       key: 'read',
       icon: <EyeOutlined />,
     },
-  {
+    hasPermission('canEdit') && {
       label: translate('Edit'),
       key: 'edit',
       icon: <EditOutlined />,
@@ -86,13 +86,12 @@ export default function DataTable({ config, extra = [] }) {
     {
       type: 'divider',
     },
-
     hasPermission('canDelete') && {
       label: translate('Delete'),
       key: 'delete',
       icon: <DeleteOutlined />,
     },
-  ];
+  ].filter(Boolean);
   
   const { state } = useCrudContext();
   const handleRead = (record) => {
@@ -159,6 +158,13 @@ export default function DataTable({ config, extra = [] }) {
                   break;
 
                 default:
+                  dispatch(crud.currentItem({ data: record }));
+                  readBox.close();
+                  editBox.close();
+                  advancedBox.open();
+                  panel.open();
+                  collapsedBox.open();
+                  if (onExtraAction) onExtraAction(key, record);
                   break;
               }
               // else if (key === '2')handleCloseTask
@@ -182,19 +188,18 @@ export default function DataTable({ config, extra = [] }) {
   const dispatch = useDispatch();
 
   const handelDataTableLoad = useCallback((pagination) => {
-    // console.log('Loading data for page:', pagination.current);
-    const options = { page: pagination.current || 1, items: pagination.pageSize || 10 };
+    const options = { page: pagination.current || 1, items: pagination.pageSize || 10, ...filterOptions };
     dispatch(crud.list({ entity, options }));
-  }, []);
+  }, [JSON.stringify(filterOptions)]);
 
   const filterTable = (e) => {
     const value = e.target.value;
-    const options = { q: value, fields: searchConfig?.searchFields || '' };
+    const options = { q: value, fields: searchConfig?.searchFields || '', ...filterOptions };
     dispatch(crud.list({ entity, options }));
   };
 
   const dispatcher = () => {
-    dispatch(crud.list({ entity }));
+    dispatch(crud.list({ entity, options: { ...filterOptions } }));
   };
 
   useEffect(() => {

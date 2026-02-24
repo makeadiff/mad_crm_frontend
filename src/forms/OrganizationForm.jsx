@@ -1,4 +1,4 @@
-import { Form, Input, Select, DatePicker, Radio, Switch, InputNumber, Checkbox, Space } from 'antd';
+import { Form, Input, Select, DatePicker, Radio, Switch, InputNumber, Checkbox, Space, Tag, Typography, Divider } from 'antd';
 import { useState, useEffect } from 'react';
 import useLanguage from '@/locale/useLanguage';
 import dayjs from 'dayjs';
@@ -9,7 +9,7 @@ import { lead_source } from '@/utils/Lead/leadSource';
 import { affiliatedSchoolList } from '@/utils/affiliatedSchoolList';
 import { schoolTypeList } from '@/utils/schoolTypeList';
 import { Upload, Button, message } from 'antd';
-import { UploadOutlined, EyeOutlined, DeleteOutlined } from '@ant-design/icons';
+import { UploadOutlined, EyeOutlined, DeleteOutlined, LinkOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import { crud } from '@/redux/crud/actions';
 import { useSelector } from 'react-redux';
@@ -88,6 +88,11 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
       updatedConversionStage = "in_conversion";
     }
 
+      // Find active MOU from mous array
+      const activeMou = Array.isArray(currentItem.mous)
+        ? currentItem.mous.find((m) => m.mou_status === 'active')
+        : null;
+
       form.setFieldsValue({
         ...currentItem,
         converted: currentItem.conversion_stage == 'converted' ? true : null,
@@ -95,12 +100,12 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
         date_of_first_contact: currentItem.date_of_first_contact
           ? dayjs(currentItem.date_of_first_contact)
           : null,
-        mou_sign_date: currentItem.mou_sign_date ? dayjs(currentItem.mou_sign_date) : null,
-        mou_start_date: currentItem.mou_start_date ? dayjs(currentItem.mou_start_date) : null,
-        mou_end_date: currentItem.mou_end_date ? dayjs(currentItem.mou_end_date) : null,
+        mou_sign_date: activeMou?.mou_sign_date ? dayjs(activeMou.mou_sign_date) : null,
+        mou_start_date: activeMou?.mou_start_date ? dayjs(activeMou.mou_start_date) : null,
+        mou_end_date: activeMou?.mou_end_date ? dayjs(activeMou.mou_end_date) : null,
+        confirmed_child_count: activeMou?.confirmed_child_count || currentItem.confirmed_child_count,
       });
-      // setFormCoversionStage(currentItem.conversion_stage)
-      setMouUrl(currentItem.mou_url || null);
+      setMouUrl(activeMou?.mou_url || currentItem.mou_url || null);
       setStatus(updatedConversionStage);
       setIsConverted(currentItem.converted || null)
       setIsMouSigned(currentItem.mou_sign || null)
@@ -165,8 +170,53 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
     handleFieldChange('specific_document_required', value);
   };
 
-  const handleFileChange = (fileList) => {
-    setFileList(fileList);
+  const handleFileChange = (info) => {
+    setFileList(info.slice(-1)); // Keep only the last file
+  };
+
+  const beforeMouUpload = (file) => {
+    const isPdf = file.type === 'application/pdf';
+    if (!isPdf) {
+      message.error('You can only upload PDF files.');
+      return Upload.LIST_IGNORE;
+    }
+    const isLt15M = file.size / 1024 / 1024 < 15;
+    if (!isLt15M) {
+      message.error('File must be smaller than 15MB.');
+      return Upload.LIST_IGNORE;
+    }
+    return false;
+  };
+
+  // --- MOU Date validators ---
+  const validateMouStartDate = (_, value) => {
+    if (!value) return Promise.resolve();
+    const signDate = form.getFieldValue('mou_sign_date');
+    if (signDate && value.isBefore(signDate, 'day')) {
+      return Promise.reject('Start date cannot be before sign date');
+    }
+    return Promise.resolve();
+  };
+
+  const validateMouEndDate = (_, value) => {
+    if (!value) return Promise.resolve();
+    const startDate = form.getFieldValue('mou_start_date');
+    const signDate = form.getFieldValue('mou_sign_date');
+    if (startDate && (value.isBefore(startDate, 'day') || value.isSame(startDate, 'day'))) {
+      return Promise.reject('End date must be after start date');
+    }
+    if (signDate && (value.isBefore(signDate, 'day') || value.isSame(signDate, 'day'))) {
+      return Promise.reject('End date must be after sign date');
+    }
+    return Promise.resolve();
+  };
+
+  const handleMouDateChange = () => {
+    const fields = ['mou_start_date', 'mou_end_date'];
+    const touched = fields.filter((f) => form.getFieldValue(f));
+    if (touched.length) {
+      form.validateFields(touched).catch(() => {});
+    }
   };
 
   const handleDelayedCurrentStatusChange = (value) => {
@@ -505,86 +555,168 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
           </Radio.Group>
         </Form.Item>
 
-        {mouUrl ? (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '5px 5px',
-              borderRadius: '8px',
-              background: 'rgba(245, 40, 145, 0.05)',
-              boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-              marginBottom: '20px',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <p style={{ margin: 0, fontWeight: 'bold', color: 'black', marginRight: '10px' }}>
-                Mou :
-              </p>
-              <a href={mouUrl} target="_blank" rel="noopener noreferrer">
-                <Button icon={<EyeOutlined />} style={{ backgroundColor: 'transparent' }}>
-                  View Document
-                </Button>
-              </a>
+        {/* ===== Active MOU Section ===== */}
+        <Divider orientation="left">Active MOU</Divider>
+
+        <div
+          style={{
+            padding: '16px',
+            borderRadius: '8px',
+            background: '#f6ffed',
+            border: '1px solid #b7eb8f',
+            marginBottom: '20px',
+          }}
+        >
+          {mouUrl ? (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '16px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Tag color="green">Active</Tag>
+                <a href={mouUrl} target="_blank" rel="noopener noreferrer">
+                  <Button icon={<EyeOutlined />} type="link" style={{ padding: 0 }}>
+                    View Document
+                  </Button>
+                </a>
+              </div>
+              <Button icon={<DeleteOutlined />} danger size="small" onClick={handleDeleteMou} />
             </div>
-            <Button icon={<DeleteOutlined />} danger onClick={handleDeleteMou} />
-          </div>
-        ) : (
-          <>
+          ) : (
             <Form.Item
               label={translate('MOU_document')}
               name="mou_document"
               valuePropName="fileList"
               getValueFromEvent={(e) => (Array.isArray(e) ? e : e?.fileList)}
               rules={[{ required: true }]}
+              style={{ marginBottom: '12px' }}
             >
               <Upload
-                beforeUpload={() => false} // Prevent automatic upload
+                beforeUpload={beforeMouUpload}
                 onChange={(info) => handleFileChange(info.fileList)}
+                fileList={fileList}
+                maxCount={1}
+                accept=".pdf"
               >
-                <Button icon={<UploadOutlined />}>{translate('Click_to_upload')}</Button>
+                {fileList.length === 0 && (
+                  <Button icon={<UploadOutlined />}>{translate('Click_to_upload')}</Button>
+                )}
               </Upload>
             </Form.Item>
+          )}
 
-            <Form.Item
-              label={translate('mou_sign_date')}
-              name="mou_sign_date"
-              rules={[{ required: true }]}
-            >
-              <DatePicker style={{ width: '100%' }} format="DD-MM-YYYY" />
-            </Form.Item>
+          <Form.Item
+            label={translate('mou_sign_date')}
+            name="mou_sign_date"
+            rules={[{ required: true, message: 'Please select MOU sign date' }]}
+            style={{ marginBottom: '12px' }}
+          >
+            <DatePicker disabled={!!mouUrl} style={{ width: '100%' }} format="DD-MM-YYYY" onChange={handleMouDateChange} />
+          </Form.Item>
 
-            <Form.Item
-              label={translate('mou_start_date')}
-              name="mou_start_date"
-              rules={[{ required: true }]}
-            >
-              <DatePicker style={{ width: '100%' }} format="DD-MM-YYYY" />
-            </Form.Item>
+          <Form.Item
+            label={translate('mou_start_date')}
+            name="mou_start_date"
+            dependencies={['mou_sign_date']}
+            rules={[
+              { required: true, message: 'Please select MOU start date' },
+              { validator: validateMouStartDate },
+            ]}
+            style={{ marginBottom: '12px' }}
+          >
+            <DatePicker disabled={!!mouUrl} style={{ width: '100%' }} format="DD-MM-YYYY" onChange={handleMouDateChange} />
+          </Form.Item>
 
-            <Form.Item
-              label={translate('mou_end_date')}
-              name="mou_end_date"
-              rules={[{ required: true }]}
-            >
-              <DatePicker style={{ width: '100%' }} format="DD-MM-YYYY" />
-            </Form.Item>
+          <Form.Item
+            label={translate('mou_end_date')}
+            name="mou_end_date"
+            dependencies={['mou_sign_date', 'mou_start_date']}
+            rules={[
+              { required: true, message: 'Please select MOU end date' },
+              { validator: validateMouEndDate },
+            ]}
+            style={{ marginBottom: '12px' }}
+          >
+            <DatePicker disabled={!!mouUrl} style={{ width: '100%' }} format="DD-MM-YYYY" />
+          </Form.Item>
 
-            <Form.Item
-              label={translate('Confirmed Child Count')}
-              name="confirmed_child_count"
-              rules={[{ required: true, message: 'Please enter confirmed child count' }]}
-            >
-              <InputNumber
-                placeholder="Enter confirmed child count"
-                min={0}
-                style={{ width: '100%' }}
-                onChange={(value) => handleFieldChange('confirmed_child_count', value)}
-              />
-            </Form.Item>
-          </>
-        )}
+          <Form.Item
+            label={translate('Confirmed Child Count')}
+            name="confirmed_child_count"
+            rules={[{ required: true, message: 'Please enter confirmed child count' }]}
+            style={{ marginBottom: 0 }}
+          >
+            <InputNumber
+              disabled={!!mouUrl}
+              placeholder="Enter confirmed child count"
+              min={1}
+              style={{ width: '100%' }}
+              onChange={(value) => handleFieldChange('confirmed_child_count', value)}
+            />
+          </Form.Item>
+        </div>
+
+        {/* ===== Previous MOUs (Inactive) - Read Only ===== */}
+        {Array.isArray(currentItem?.mous) &&
+          currentItem.mous.filter((m) => m.mou_status === 'inactive').length > 0 && (
+            <>
+              <Divider orientation="left" style={{ fontSize: 13 }}>
+                Previous MOUs
+              </Divider>
+              {currentItem.mous
+                .filter((m) => m.mou_status === 'inactive')
+                .map((mou, index) => (
+                  <div
+                    key={mou.id || index}
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: '8px',
+                      background: '#fafafa',
+                      border: '1px solid #d9d9d9',
+                      marginBottom: '12px',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      <Tag color="default">Inactive</Tag>
+                      <Typography.Text type="secondary" style={{ fontSize: 13 }}>
+                        {dayjs(mou.mou_start_date).format('DD/MM/YYYY')} —{' '}
+                        {dayjs(mou.mou_end_date).format('DD/MM/YYYY')}
+                      </Typography.Text>
+                    </div>
+                    {mou.confirmed_child_count && (
+                      <div style={{ fontSize: 13, marginBottom: '4px' }}>
+                        <Typography.Text>
+                          Child Count: {mou.confirmed_child_count}
+                        </Typography.Text>
+                      </div>
+                    )}
+                    {mou.mou_url && (
+                      <Button
+                        type="link"
+                        href={mou.mou_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        icon={<LinkOutlined />}
+                        style={{ padding: 0, fontSize: 13 }}
+                      >
+                        View Document
+                      </Button>
+                    )}
+                  </div>
+                ))}
+            </>
+          )}
 
         <Form.Item>
           <Button type="primary" htmlType="submit">

@@ -733,12 +733,20 @@ export default function LeadForm({ config, isUpdate = false, form }) {
                   ]}
                 >
                   <Upload
+                    accept=".pdf,application/pdf"
                     beforeUpload={(file) => {
-                      const isLt15MB = file.size / 1024 / 1024 < 15;
-                      if (!isLt15MB) {
+                      const isPdf =
+                        file.type === 'application/pdf' || file.name?.toLowerCase().endsWith('.pdf');
+                      if (!isPdf) {
+                        window.alert('Only PDF files are allowed');
+                        return Upload.LIST_IGNORE;
+                      }
+
+                      const isMax15MB = file.size / 1024 / 1024 <= 15;
+                      if (!isMax15MB) {
                         window.alert(translate('File_size_should_be_less_than_15MB'));
                       }
-                      return isLt15MB ? false : Upload.LIST_IGNORE; // prevent uploading and exclude from fileList
+                      return isMax15MB ? false : Upload.LIST_IGNORE; // prevent uploading and exclude from fileList
                     }}
                     onChange={(info) => handleFileChange(info.fileList)}
                   >

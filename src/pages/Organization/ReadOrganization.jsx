@@ -100,35 +100,78 @@ export default function ReadOrganization() {
           <Descriptions.Item label={translate('Mou_Sign')}>
             {currentItem?.mou_sign == true ? 'Yes' : 'No'}
           </Descriptions.Item>
-          <Descriptions.Item label={translate('date_of_MOU_signing')}>
-            {dayjs(currentItem.date_of_mou_signing).format('DD-MM-YYYY')}
-          </Descriptions.Item>
-          {/* MOU Document Link */}
-          {currentItem?.mou_url && (
-            <Descriptions.Item label={translate('MOU Document')}>
-              <Button
-                type="link"
-                href={currentItem.mou_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                icon={<LinkOutlined />}
+
+          {/* MOU History */}
+          {Array.isArray(currentItem?.mous) && currentItem.mous.length > 0 ? (
+            currentItem.mous.map((mou, index) => (
+              <Descriptions.Item
+                key={mou.id || index}
+                label={
+                  <span>
+                    MOU from {dayjs(mou.mou_start_date).format('DD/MM/YY')} to{' '}
+                    {dayjs(mou.mou_end_date).format('DD/MM/YY')}
+                  </span>
+                }
               >
-                View Document
-              </Button>
-            </Descriptions.Item>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <div>
+                    <Tag color={mou.mou_status === 'active' ? 'green' : 'default'}>
+                      {mou.mou_status === 'active' ? 'Active' : 'Inactive'}
+                    </Tag>
+                  </div>
+                  {mou.confirmed_child_count && (
+                    <span>Child Count: {mou.confirmed_child_count}</span>
+                  )}
+                  {mou.mou_url && (
+                    <Button
+                      type="link"
+                      href={mou.mou_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      icon={<LinkOutlined />}
+                      style={{ padding: 0 }}
+                    >
+                      View Document
+                    </Button>
+                  )}
+                </div>
+              </Descriptions.Item>
+            ))
+          ) : (
+            <>
+              <Descriptions.Item label={translate('date_of_MOU_signing')}>
+                {currentItem.date_of_mou_signing
+                  ? dayjs(currentItem.date_of_mou_signing).format('DD-MM-YYYY')
+                  : '-'}
+              </Descriptions.Item>
+              {currentItem?.mou_url && (
+                <Descriptions.Item label={translate('MOU Document')}>
+                  <Button
+                    type="link"
+                    href={currentItem.mou_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    icon={<LinkOutlined />}
+                  >
+                    View Document
+                  </Button>
+                </Descriptions.Item>
+              )}
+              <Descriptions.Item label={translate('mou_start_date')}>
+                {currentItem.mou_start_date
+                  ? dayjs(currentItem.mou_start_date).format('DD-MM-YYYY')
+                  : '-'}
+              </Descriptions.Item>
+              <Descriptions.Item label={translate('mou_end_date')}>
+                {currentItem.mou_end_date
+                  ? dayjs(currentItem.mou_end_date).format('DD-MM-YYYY')
+                  : '-'}
+              </Descriptions.Item>
+              <Descriptions.Item label={translate('confirmed_child_count')}>
+                {currentItem?.confirmed_child_count || '-'}
+              </Descriptions.Item>
+            </>
           )}
-          <Descriptions.Item label={translate('mou_sign_date')}>
-            {dayjs(currentItem.mou_sign_date).format('DD-MM-YYYY')}
-          </Descriptions.Item>
-          <Descriptions.Item label={translate('mou_start_date')}>
-            {dayjs(currentItem.mou_start_date).format('DD-MM-YYYY')}
-          </Descriptions.Item>
-          <Descriptions.Item label={translate('mou_end_date')}>
-            {dayjs(currentItem.mou_end_date).format('DD-MM-YYYY')}
-          </Descriptions.Item>
-          <Descriptions.Item label={translate('confirmed_child_count')}>
-            {currentItem?.confirmed_child_count}
-          </Descriptions.Item>
 
           {currentItem?.specific_doc_required && (
             <Descriptions.Item label={translate('specific_doc_required')}>

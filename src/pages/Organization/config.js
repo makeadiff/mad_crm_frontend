@@ -27,3 +27,24 @@ export const fields = {
     type: 'string',
   }
 };
+
+export const inactiveFields = {
+  id:{
+
+  },
+  partner_name: {
+    type: 'string',
+  },
+  city: {
+    type: 'string',
+  },
+  co_name: {
+    type: 'string',
+  },
+  mou_end_date: {
+    type: 'date',
+  },
+  non_conversion_reason: {
+    type: 'string',
+  },
+};
