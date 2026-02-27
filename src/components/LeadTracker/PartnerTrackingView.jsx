@@ -24,6 +24,7 @@ const LABEL = {
     interested: 'Interested',
     interested_but_facing_delay: 'Facing Delays',
     converted: 'Converted',
+    mou_renewed: 'MOU Renewed',
     dropped: 'Dropped',
     not_interested: 'Not Interested',
 };
@@ -70,7 +71,9 @@ export default function PartnerTrackingView({
                 label: dayjs(r.createdAt).format('DD MMM'),
                 children: (
                     <Space direction="vertical" size={0}>
-                        <Typography.Text strong>{LABEL[r.stage]}</Typography.Text>
+                        <Typography.Text strong>
+                            {LABEL[r.display_stage] ?? r.display_stage?.replace(/_/g, ' ')}
+                        </Typography.Text>
                         <Typography.Text type="secondary">
                             {dayjs(r.createdAt).format('hh:mm A')}
                         </Typography.Text>

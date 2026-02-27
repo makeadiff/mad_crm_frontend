@@ -19,14 +19,14 @@ import { useCrudContext } from '@/context/crud';
 import { CrudLayout } from '@/layout';
 import LeadForm from '@/forms/LeadForm';
 
-function SidePanelTopContent({ config, formElements, withUpload, readItem}) {
+function SidePanelTopContent({ config, formElements, withUpload, readItem, renewalForm }) {
   // console.log("side pannel component is envolved")
   const translate = useLanguage();
   const { crudContextAction, state } = useCrudContext();
   const { deleteModalLabels } = config;
   const { modal, editBox } = crudContextAction;
 
-  const { isReadBoxOpen, isEditBoxOpen } = state;
+  const { isReadBoxOpen, isEditBoxOpen, isAdvancedBoxOpen } = state;
   // console.log(" is Edit Box open in side pannel content :", isEditBoxOpen)
   const { result: currentItem } = useSelector(selectCurrentItem);
   const dispatch = useDispatch();
@@ -49,7 +49,7 @@ function SidePanelTopContent({ config, formElements, withUpload, readItem}) {
     editBox.open();
   };
 
-  const show = isReadBoxOpen || isEditBoxOpen ? { opacity: 1 } : { opacity: 0 };
+  const show = isReadBoxOpen || isEditBoxOpen || isAdvancedBoxOpen ? { opacity: 1 } : { opacity: 0 };
   return (
     <>
       {/* <Row style={show} gutter={(24, 24)}>
@@ -85,7 +85,9 @@ function SidePanelTopContent({ config, formElements, withUpload, readItem}) {
 
       <div style={{ textAlign: 'center', marginBottom: '15px', marginTop: '0px' }}>
         <h3 style={{ fontWeight: 'bold', color: '#333' }}>
-          {isEditBoxOpen
+          {isAdvancedBoxOpen
+            ? `MOU Renewal`
+            : isEditBoxOpen
             ? `Edit ${translate(config.entity)} Details`
             : `${translate(config.entity)} Details`}
         </h3>
@@ -97,7 +99,7 @@ function SidePanelTopContent({ config, formElements, withUpload, readItem}) {
       {/* <UpdateForm config={config} formElements={formElements} withUpload={withUpload} /> */}
 
       {isEditBoxOpen && formElements}
-      {/* {formElements} */}
+      {isAdvancedBoxOpen && renewalForm}
     </>
   );
 }
@@ -123,7 +125,7 @@ function FixHeaderPanel({ config }) {
   );
 }
 
-function CrudModule({ config, createForm, updateForm, withUpload = false, submitButton= true, readItem, DeleteModalComponent }) {
+function CrudModule({ config, createForm, updateForm, withUpload = false, submitButton= true, readItem, DeleteModalComponent, extra, onExtraAction, renewalForm, filterOptions = {} }) {
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {
@@ -142,11 +144,11 @@ function CrudModule({ config, createForm, updateForm, withUpload = false, submit
         createForm
       }
       sidePanelTopContent={
-        <SidePanelTopContent config={config} formElements={updateForm} withUpload={withUpload} readItem={readItem} />
+        <SidePanelTopContent config={config} formElements={updateForm} withUpload={withUpload} readItem={readItem} renewalForm={renewalForm} />
         // updateForm
       }
     >
-      <DataTable config={config} />
+      <DataTable config={config} extra={extra} onExtraAction={onExtraAction} filterOptions={filterOptions} />
       <UsedDeleteModal config={config} /> {/* ✅ uses injected or default */}
     </CrudLayout>
   );
