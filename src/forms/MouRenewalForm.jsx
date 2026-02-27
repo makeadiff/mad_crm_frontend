@@ -277,7 +277,7 @@ export default function MouRenewalForm() {
         >
           <CheckCircleOutlined style={{ fontSize: 36, color: '#1890ff', marginBottom: 16 }} />
           <Title level={5} style={{ marginBottom: 24, color: '#333' }}>
-            Has the school been renewed for the next term of MOU?
+            Are you continuing with the school for the next year?
           </Title>
           <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
             <Button type="primary" size="large" onClick={handleRenewedYes} style={{ minWidth: 100 }}>
