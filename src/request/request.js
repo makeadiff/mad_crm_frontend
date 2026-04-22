@@ -200,11 +200,10 @@ const request = {
 
   post: async ({ entity, jsonData }) => {
     try {
-      // console.log("In [POST] request.js file, entity and jsonData :", entity, jsonData)
       includeToken();
-      // console.log("tokane included")
-      const response = await axios.post(entity, jsonData);
-      // console.log("response of post api :", response)
+      const isFormData = typeof FormData !== 'undefined' && jsonData instanceof FormData;
+      const config = isFormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
+      const response = await axios.post(entity, jsonData, config);
       return response.data;
     } catch (error) {
       return errorHandler(error);
