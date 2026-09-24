@@ -41,7 +41,7 @@ export default function CoListSelect({ name, label, required, disabled }) {
     <Form.Item
       label={translate(label)}
       name={name}
-      rules={[{ required: required || false, message: translate('Please select a CO') }]}
+      rules={[{ required: (required && !disabled) || false, message: translate('Please select a CO') }]}
     >
       <Select
         loading={loading}

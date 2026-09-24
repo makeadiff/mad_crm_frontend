@@ -11,7 +11,7 @@ export default function CustomColorSelect({ name, label, required, options, disa
       name={name}
       rules={[
         {
-          required: required || false,
+          required: (required && !disabled) || false, // can't be edited → don't validate
         },
       ]}
     >

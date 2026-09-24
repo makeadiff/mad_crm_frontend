@@ -211,6 +211,9 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
     return Promise.resolve();
   };
 
+  // A field the user can't edit shouldn't be validated — otherwise a missing/old value blocks submit with no way to fix it
+  const skipIfDisabled = (disabled, rules) => (disabled ? [] : rules);
+
   const handleMouDateChange = () => {
     const fields = ['mou_start_date', 'mou_end_date'];
     const touched = fields.filter((f) => form.getFieldValue(f));
@@ -288,7 +291,7 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
         <Form.Item
           label={translate('conversion_stage')}
           name="conversion_stage"
-          rules={[{ required: true }]}
+          rules={skipIfDisabled(true, [{ required: true }])}
         >
           <Select
             onChange={(value) => {
@@ -332,7 +335,7 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
         <Form.Item
           label={translate('address_line_1')}
           name="address_line_1"
-          rules={[{ required: true, message: translate('please_enter_address') }]}
+          rules={skipIfDisabled(true, [{ required: true, message: translate('please_enter_address') }])}
         >
           <Input disabled onChange={(e) => handleFieldChange('address', e.target.value)} />
         </Form.Item>
@@ -344,10 +347,10 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
         <Form.Item
           label={translate('pincode')}
           name="pincode"
-          rules={[
+          rules={skipIfDisabled(true, [
             { required: true, message: translate('please_enter_pincode') },
             { pattern: /^[1-9][0-9]{5}$/, message: translate('pincode_must_be_6_digits') },
-          ]}
+          ])}
         >
           <Input
             type="text"
@@ -441,12 +444,12 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
         <Form.Item
           label={translate('partner_affiliation_type')}
           name="partner_affiliation_type"
-          rules={[
+          rules={skipIfDisabled(true, [
             {
               required: status === 'prospecting' || status === 'in_conversion',
               message: translate('please_select_partner_affiliation_type'),
             },
-          ]}
+          ])}
         >
           <Select
             disabled
@@ -479,7 +482,7 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
         <Form.Item
           label={translate('potential_child_count')}
           name="potential_child_count"
-          rules={[
+          rules={skipIfDisabled(true, [
             {
               required: true,
               message: translate('please_enter_potential_child_count'),
@@ -494,7 +497,7 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
                 return Promise.resolve();
               },
             },
-          ]}
+          ])}
         >
           <Input
             disabled
@@ -505,7 +508,7 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
         <Form.Item
           label={translate('select_classes')}
           name="classes"
-          rules={[
+          rules={skipIfDisabled(true, [
             {
               required: true,
               message: translate('please_select_at_least_one_classes'),
@@ -516,7 +519,7 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
                   ? Promise.resolve()
                   : Promise.reject(translate('please_select_at_least_one_classes')),
             },
-          ]}
+          ])}
         >
           <Checkbox.Group
             disabled
@@ -532,11 +535,11 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
           label={translate('low_income_resource')}
           name="low_income_resource"
           valuePropName="checked"
-          rules={[
+          rules={skipIfDisabled(true, [
             {
               required: status === 'prospecting' || status === 'in_conversion',
             },
-          ]}
+          ])}
         >
           <Switch disabled checkedChildren="Yes" unCheckedChildren="No" />
         </Form.Item>
@@ -612,7 +615,7 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
           <Form.Item
             label={translate('mou_sign_date')}
             name="mou_sign_date"
-            rules={[{ required: true, message: 'Please select MOU sign date' }]}
+            rules={skipIfDisabled(!!mouUrl, [{ required: true, message: 'Please select MOU sign date' }])}
             style={{ marginBottom: '12px' }}
           >
             <DatePicker disabled={!!mouUrl} style={{ width: '100%' }} format="DD-MM-YYYY" onChange={handleMouDateChange} />
@@ -622,10 +625,10 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
             label={translate('mou_start_date')}
             name="mou_start_date"
             dependencies={['mou_sign_date']}
-            rules={[
+            rules={skipIfDisabled(!!mouUrl, [
               { required: true, message: 'Please select MOU start date' },
               { validator: validateMouStartDate },
-            ]}
+            ])}
             style={{ marginBottom: '12px' }}
           >
             <DatePicker disabled={!!mouUrl} style={{ width: '100%' }} format="DD-MM-YYYY" onChange={handleMouDateChange} />
@@ -635,10 +638,10 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
             label={translate('mou_end_date')}
             name="mou_end_date"
             dependencies={['mou_sign_date', 'mou_start_date']}
-            rules={[
+            rules={skipIfDisabled(!!mouUrl, [
               { required: true, message: 'Please select MOU end date' },
               { validator: validateMouEndDate },
-            ]}
+            ])}
             style={{ marginBottom: '12px' }}
           >
             <DatePicker disabled={!!mouUrl} style={{ width: '100%' }} format="DD-MM-YYYY" />
@@ -647,7 +650,7 @@ export default function OrganizationForm({ config, isUpdate = false, form }) {
           <Form.Item
             label={translate('Confirmed Child Count')}
             name="confirmed_child_count"
-            rules={[{ required: true, message: 'Please enter confirmed child count' }]}
+            rules={skipIfDisabled(!!mouUrl, [{ required: true, message: 'Please enter confirmed child count' }])}
             style={{ marginBottom: 0 }}
           >
             <InputNumber

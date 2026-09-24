@@ -103,7 +103,7 @@ export default function LocationSelect({ nameState, nameCity, labelState, labelC
       <Form.Item
         label={translate(labelState)}
         name={nameState}
-        rules={[{ required: required || false }]}
+        rules={[{ required: (required && !disabled) || false }]}
       >
         <Select
           showSearch
